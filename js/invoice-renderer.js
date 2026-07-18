@@ -84,6 +84,12 @@ function populateInvoice(doc, data) {
   ];
   textFields.forEach((field) => setText(doc, field, data[field] || ""));
 
+  const addressEl = doc.querySelector('[data-field="partyAddress"]');
+  if (addressEl) {
+    addressEl.textContent = data.partyAddress || "";
+    addressEl.style.display = data.partyAddress ? "block" : "none";
+  }
+
   const itemsBody = doc.getElementById("items-body");
   itemsBody.replaceChildren();
   items.forEach((item, index) => {

@@ -107,6 +107,7 @@ function collectFormData() {
   const taxType = form.querySelector('input[name="taxType"]:checked')?.value || "cgst_sgst";
   return {
     partyName: form.partyName.value.trim(),
+    partyAddress: form.partyAddress.value.trim(),
     partyGstin: form.partyGstin.value.trim(),
     state: form.state.value.trim(),
     stateCode: form.stateCode.value.trim(),

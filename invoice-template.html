@@ -139,6 +139,12 @@ td, th {
 
 .small { font-size: 11px; color: #444; }
 
+.party-address {
+    display: block;
+    margin-top: 4px;
+    white-space: pre-line;
+}
+
 .items td {
     min-height: 36px;
     vertical-align: top;
@@ -256,7 +262,7 @@ td, th {
 </tr>
 
 <tr>
-    <td colspan="6" rowspan="4"><b>M/s:</b> <span data-field="partyName"></span></td>
+    <td colspan="6" rowspan="4"><b>M/s:</b> <span data-field="partyName"></span><span data-field="partyAddress" class="party-address"></span></td>
     <td colspan="4"><b>Invoice No.:</b> <span data-field="invoiceNo"></span></td>
 </tr>
 <tr>
