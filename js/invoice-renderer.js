@@ -66,6 +66,12 @@ function createItemRow(doc, item, index, itemCount) {
   return tr;
 }
 
+function buildInvoiceFilename(data) {
+  const invoiceNo = String(data.invoiceNo).trim();
+  const customer = String(data.partyName).trim().replace(/\s+/g, "_");
+  return `${invoiceNo}-${customer}`;
+}
+
 function populateInvoice(doc, data) {
   const items = data.items.filter((item) => item.description && item.qty > 0);
   const totals = calculateTotals(items, data);
@@ -110,41 +116,52 @@ function populateInvoice(doc, data) {
   if (logo && !logo.src.startsWith("http")) {
     logo.src = new URL("assets/terapanth.jpg", base).href;
   }
+
+  doc.title = buildInvoiceFilename(data);
 }
 
-function buildPrintableHtml(doc) {
+function buildPrintableHtml(doc, filename) {
   const base = document.baseURI.replace(/[^/]+$/, "");
+  const safeTitle = escapeHtml(filename);
   let html = "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+  html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${safeTitle}</title>`);
   if (!html.includes("<base ")) {
     html = html.replace("<head>", `<head><base href="${base}">`);
   }
   return html;
 }
 
-function printHtml(html) {
+function printHtml(html, filename) {
   return new Promise((resolve, reject) => {
     const iframe = document.createElement("iframe");
-    iframe.setAttribute("title", "Invoice print");
+    iframe.setAttribute("title", filename);
     iframe.setAttribute("style", "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden");
     document.body.appendChild(iframe);
 
     const win = iframe.contentWindow;
     const doc = win.document;
+    const previousTitle = document.title;
+
     doc.open();
     doc.write(html);
     doc.close();
+    doc.title = filename;
 
     const cleanup = () => {
+      document.title = previousTitle;
       setTimeout(() => iframe.remove(), 500);
       resolve();
     };
 
     const triggerPrint = () => {
       try {
+        document.title = filename;
+        doc.title = filename;
         win.focus();
         win.print();
         cleanup();
       } catch (err) {
+        document.title = previousTitle;
         iframe.remove();
         reject(err);
       }
@@ -163,7 +180,8 @@ async function generateInvoicePdf(data) {
   const raw = await loadTemplate();
   const parser = new DOMParser();
   const doc = parser.parseFromString(raw, "text/html");
+  const filename = buildInvoiceFilename(data);
   populateInvoice(doc, data);
-  const html = buildPrintableHtml(doc);
-  await printHtml(html);
+  const html = buildPrintableHtml(doc, filename);
+  await printHtml(html, filename);
 }
