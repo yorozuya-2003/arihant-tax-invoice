@@ -133,44 +133,27 @@ function buildPrintableHtml(doc, filename) {
 
 function printHtml(html, filename) {
   return new Promise((resolve, reject) => {
-    const iframe = document.createElement("iframe");
-    iframe.setAttribute("title", filename);
-    iframe.setAttribute("style", "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden");
-    document.body.appendChild(iframe);
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      reject(new Error("POPUP_BLOCKED"));
+      return;
+    }
 
-    const win = iframe.contentWindow;
-    const doc = win.document;
-    const previousTitle = document.title;
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.document.title = filename;
 
-    doc.open();
-    doc.write(html);
-    doc.close();
-    doc.title = filename;
-
-    const cleanup = () => {
-      document.title = previousTitle;
-      setTimeout(() => iframe.remove(), 500);
+    const triggerPrint = () => {
+      printWindow.focus();
+      printWindow.print();
       resolve();
     };
 
-    const triggerPrint = () => {
-      try {
-        document.title = filename;
-        doc.title = filename;
-        win.focus();
-        win.print();
-        cleanup();
-      } catch (err) {
-        document.title = previousTitle;
-        iframe.remove();
-        reject(err);
-      }
-    };
-
-    if (doc.fonts && doc.fonts.ready) {
-      doc.fonts.ready.then(triggerPrint).catch(triggerPrint);
+    if (printWindow.document.fonts?.ready) {
+      printWindow.document.fonts.ready.then(triggerPrint).catch(triggerPrint);
     } else {
-      win.onload = () => setTimeout(triggerPrint, 300);
+      printWindow.onload = () => setTimeout(triggerPrint, 300);
       setTimeout(triggerPrint, 800);
     }
   });

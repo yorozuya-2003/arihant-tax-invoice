@@ -159,7 +159,11 @@ form.addEventListener("submit", async (event) => {
     await generateInvoicePdf(data);
   } catch (err) {
     console.error(err);
-    showError("Could not open invoice for printing. Please try again.");
+    if (err.message === "POPUP_BLOCKED") {
+      showError("Please allow pop-ups, then tap Generate invoice again.");
+    } else {
+      showError("Could not open invoice for printing. Please try again.");
+    }
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = "Generate invoice";
