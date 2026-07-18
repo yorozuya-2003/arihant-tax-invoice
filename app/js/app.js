@@ -37,8 +37,8 @@ function createItemCard() {
   card.dataset.itemId = String(itemCount);
   card.innerHTML = `
     <div class="item-card-header">
-      <strong>Item ${itemCount}</strong>
-      <button type="button" class="btn btn-ghost remove-item-btn" aria-label="Remove item">Remove</button>
+      <span class="item-card-title">Item ${itemCount}</span>
+      <span class="item-card-amount item-amount-value">₹0.00</span>
     </div>
     <div class="field">
       <label>Description</label>
@@ -54,11 +54,13 @@ function createItemCard() {
         <input type="number" class="item-qty" min="0" step="0.01" value="1" inputmode="decimal" required>
       </div>
     </div>
-    <div class="field">
-      <label>Rate (₹ per unit)</label>
-      <input type="number" class="item-rate" min="0" step="0.01" value="0" inputmode="decimal" required>
+    <div class="field item-rate-row">
+      <div class="field">
+        <label>Rate (₹ per unit)</label>
+        <input type="number" class="item-rate" min="0" step="0.01" value="0" inputmode="decimal" required>
+      </div>
+      <button type="button" class="btn btn-link remove-item-btn" aria-label="Remove item">Remove</button>
     </div>
-    <div class="item-amount">Amount: <strong class="item-amount-value">₹0.00</strong></div>
   `;
 
   card.querySelector(".remove-item-btn").addEventListener("click", () => {
@@ -81,7 +83,7 @@ function createItemCard() {
 
 function renumberItems() {
   [...itemsContainer.querySelectorAll(".item-card")].forEach((card, index) => {
-    card.querySelector(".item-card-header strong").textContent = `Item ${index + 1}`;
+    card.querySelector(".item-card-title").textContent = `Item ${index + 1}`;
   });
 }
 
@@ -160,7 +162,7 @@ form.addEventListener("submit", async (event) => {
     showError("Could not open invoice for printing. Please try again.");
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = "Print / Save Invoice PDF";
+    submitBtn.textContent = "Generate invoice";
   }
 });
 

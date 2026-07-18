@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tax Invoice Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="app-header">
-    <h1>Tax Invoice</h1>
-    <p>Arihant Marble &amp; Granite</p>
+    <h1>Arihant Marble &amp; Granite</h1>
+    <p>Tax Invoice</p>
   </header>
 
   <main>
@@ -17,7 +20,7 @@
       <p id="form-error" class="form-error" role="alert"></p>
 
       <section>
-        <h2>Customer Details</h2>
+        <h2>Customer</h2>
         <div class="field">
           <label for="partyName">Customer (M/s)</label>
           <input id="partyName" name="partyName" type="text" required autocomplete="organization">
@@ -43,7 +46,7 @@
       </section>
 
       <section>
-        <h2>Invoice Details</h2>
+        <h2>Invoice</h2>
         <div class="field-row">
           <div class="field">
             <label for="invoiceNo">Invoice no.</label>
@@ -54,6 +57,7 @@
             <input id="date" name="date" type="date" required>
           </div>
         </div>
+
         <div class="field-row">
           <div class="field">
             <label for="vehicleNo">Vehicle no. <span class="optional">(optional)</span></label>
@@ -83,23 +87,23 @@
       <section>
         <div class="items-header">
           <h2>Items</h2>
-          <button type="button" class="btn btn-secondary" id="add-item-btn">+ Add item</button>
+          <button type="button" class="btn btn-outline" id="add-item-btn">+ Add item</button>
         </div>
         <div id="items-container"></div>
       </section>
 
       <section>
-        <h2>Tax &amp; Charges</h2>
+        <h2>Tax &amp; charges</h2>
         <div class="field">
           <label>Tax type</label>
-          <div class="tax-options">
-            <label class="tax-option">
+          <div class="tax-segmented">
+            <label>
               <input type="radio" name="taxType" value="cgst_sgst" checked>
-              CGST + SGST
+              <span>CGST + SGST</span>
             </label>
-            <label class="tax-option">
+            <label>
               <input type="radio" name="taxType" value="igst">
-              IGST
+              <span>IGST</span>
             </label>
           </div>
         </div>
@@ -119,7 +123,7 @@
 
   <div class="submit-bar">
     <button type="submit" class="btn btn-primary" id="submit-btn" form="invoice-form">
-      Print / Save Invoice PDF
+      Generate invoice
     </button>
   </div>
 
