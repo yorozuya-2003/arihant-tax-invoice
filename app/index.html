@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Invoice Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>Tax Invoice</h1>
+    <p>Arihant Marble &amp; Granite</p>
+  </header>
+
+  <main>
+    <form id="invoice-form" novalidate>
+      <p id="form-error" class="form-error" role="alert"></p>
+
+      <section>
+        <h2>Customer Details</h2>
+        <div class="field">
+          <label for="partyName">Customer (M/s)</label>
+          <input id="partyName" name="partyName" type="text" required autocomplete="organization">
+        </div>
+        <div class="field">
+          <label for="partyGstin">Party GSTIN <span class="optional">(optional)</span></label>
+          <input id="partyGstin" name="partyGstin" type="text" maxlength="15" placeholder="15-character GSTIN">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="state">State</label>
+            <input id="state" name="state" type="text">
+          </div>
+          <div class="field">
+            <label for="stateCode">State code</label>
+            <input id="stateCode" name="stateCode" type="text" maxlength="2" inputmode="numeric">
+          </div>
+        </div>
+        <div class="field">
+          <label for="shipTo">Ship to <span class="optional">(optional)</span></label>
+          <textarea id="shipTo" name="shipTo"></textarea>
+        </div>
+      </section>
+
+      <section>
+        <h2>Invoice Details</h2>
+        <div class="field-row">
+          <div class="field">
+            <label for="invoiceNo">Invoice no.</label>
+            <input id="invoiceNo" name="invoiceNo" type="text" required>
+          </div>
+          <div class="field">
+            <label for="date">Date</label>
+            <input id="date" name="date" type="date" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="vehicleNo">Vehicle no. <span class="optional">(optional)</span></label>
+            <input id="vehicleNo" name="vehicleNo" type="text">
+          </div>
+          <div class="field">
+            <label for="containerNo">Container no. <span class="optional">(optional)</span></label>
+            <input id="containerNo" name="containerNo" type="text">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="grNo">GR/LR/RR no. <span class="optional">(optional)</span></label>
+            <input id="grNo" name="grNo" type="text">
+          </div>
+          <div class="field">
+            <label for="ewayBillNo">E-way bill no. <span class="optional">(optional)</span></label>
+            <input id="ewayBillNo" name="ewayBillNo" type="text">
+          </div>
+        </div>
+        <div class="field">
+          <label for="transportName">Transport name <span class="optional">(optional)</span></label>
+          <input id="transportName" name="transportName" type="text">
+        </div>
+      </section>
+
+      <section>
+        <div class="items-header">
+          <h2>Items</h2>
+          <button type="button" class="btn btn-secondary" id="add-item-btn">+ Add item</button>
+        </div>
+        <div id="items-container"></div>
+      </section>
+
+      <section>
+        <h2>Tax &amp; Charges</h2>
+        <div class="field">
+          <label>Tax type</label>
+          <div class="tax-options">
+            <label class="tax-option">
+              <input type="radio" name="taxType" value="cgst_sgst" checked>
+              CGST + SGST
+            </label>
+            <label class="tax-option">
+              <input type="radio" name="taxType" value="igst">
+              IGST
+            </label>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="taxRate">Tax rate (%)</label>
+            <input id="taxRate" name="taxRate" type="number" min="0" step="0.01" value="9" inputmode="decimal">
+          </div>
+          <div class="field">
+            <label for="otherCharge">Other charge (₹) <span class="optional">(optional)</span></label>
+            <input id="otherCharge" name="otherCharge" type="number" min="0" step="0.01" value="0" inputmode="decimal">
+          </div>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <div class="submit-bar">
+    <button type="submit" class="btn btn-primary" id="submit-btn" form="invoice-form">
+      Print / Save Invoice PDF
+    </button>
+  </div>
+
+  <script src="js/amount-words.js"></script>
+  <script src="js/invoice-renderer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

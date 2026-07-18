@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tax Invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Source Sans 3", "Segoe UI", sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    background: #fff;
+}
+
+.invoice {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    padding: 14px 18px;
+    background: #fff;
+    border: 1px solid #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.col-sno { width: 5%; }
+.col-desc { width: 9%; }
+.col-hsn { width: 10%; }
+.col-qty { width: 14%; }
+.col-rate { width: 13%; }
+.col-rs { width: 12%; }
+.col-p { width: 6%; }
+
+td, th {
+    border: 1px solid #bbb;
+    padding: 5px 8px;
+    font-size: 12px;
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.no-border { border: none !important; }
+.center { text-align: center; }
+.right { text-align: right; }
+.bold { font-weight: 600; }
+
+.state-split { display: flex; width: 100%; }
+.state-split > div { flex: 1; padding: 5px 8px; }
+.state-split > div:first-child { border-right: 1px solid #bbb; }
+
+.title {
+    font-family: "Libre Baskerville", Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    line-height: 1.2;
+}
+
+.subtitle {
+    display: inline-block;
+    border: 1px solid #333;
+    padding: 2px 10px;
+    margin: 4px 0;
+    font-size: 12px;
+    background: #e8e8e8;
+}
+
+.items-header th {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 1.25;
+    padding: 4px 4px;
+}
+
+.unit-line {
+    font-size: 9.5px;
+    white-space: nowrap;
+}
+
+.summary .amount-col,
+.items .amount-col {
+    text-align: right;
+}
+
+.summary td.amount-col:last-child,
+.items td.amount-col:last-child {
+    white-space: nowrap;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.header-top {
+    position: relative;
+    padding: 8px 4px 12px;
+    min-height: 90px;
+    overflow: visible;
+}
+
+.header-top .header-left {
+    position: absolute;
+    left: 0;
+    top: 8px;
+    overflow: visible;
+    z-index: 1;
+}
+
+.header-logo {
+    display: block;
+    height: 120px;
+    width: auto;
+    margin-top: 4px;
+}
+
+.header-top .header-center {
+    text-align: center;
+    padding-top: 4px;
+    line-height: 1.5;
+}
+
+.header-top .header-right {
+    position: absolute;
+    right: 0;
+    top: 8px;
+    text-align: right;
+}
+
+.small { font-size: 11px; color: #444; }
+
+.items td {
+    min-height: 36px;
+    vertical-align: top;
+}
+
+.items.items--sparse td {
+    height: 100px;
+}
+
+.amount-words-cell { vertical-align: top; min-height: 56px; }
+.notes { font-size: 11px; line-height: 1.45; }
+
+.signature-block {
+    height: 120px;
+    position: relative;
+    padding: 0 !important;
+}
+
+.signature-block-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 5px 8px;
+}
+
+.customer-signature-space { flex: 1; min-height: 32px; }
+.notes-footer { flex: 0 0 auto; padding-top: 4px; font-style: italic; }
+
+.signature-for {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 8px;
+}
+
+.signature-label {
+    position: absolute;
+    bottom: 8px;
+    font-style: italic;
+}
+
+.signature-label-right { right: 10px; }
+
+.tax-inactive { color: #888; }
+
+@page {
+    size: A4;
+    margin: 0;
+}
+
+@media print {
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff;
+    }
+
+    .invoice {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 4mm 5mm;
+        border: 1px solid #000;
+        box-sizing: border-box;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="invoice">
+
+<table>
+
+<colgroup>
+    <col class="col-sno">
+    <col class="col-desc">
+    <col class="col-desc">
+    <col class="col-desc">
+    <col class="col-desc">
+    <col class="col-hsn">
+    <col class="col-qty">
+    <col class="col-rate">
+    <col class="col-rs">
+    <col class="col-p">
+</colgroup>
+
+<tr>
+    <td colspan="10" class="no-border header-top">
+        <div class="header-left bold">
+            GSTIN: 08DIZPP4729M1Z2<br>
+            <img src="assets/terapanth.jpg" alt="" class="header-logo">
+        </div>
+        <div class="header-center bold">
+            <div>TAX INVOICE</div>
+            <div>CASH/CREDIT</div>
+        </div>
+        <div class="header-right">
+            <b>Mobile:</b><br>
+            9214022821<br>
+            9214033476
+        </div>
+    </td>
+</tr>
+
+<tr>
+    <td colspan="10" class="center no-border" style="padding-bottom:10px;">
+        <div class="title">ARIHANT MARBLE &amp; GRANITE</div>
+        <div class="subtitle">Deals in all types of marble &amp; granite block, slabs &amp; tiles</div>
+        <div class="small">81, Bhikshu Nagar, Bedla, Udaipur - 313004 (Raj.) INDIA</div>
+    </td>
+</tr>
+
+<tr>
+    <td colspan="6" rowspan="4"><b>M/s:</b> <span data-field="partyName"></span></td>
+    <td colspan="4"><b>Invoice No.:</b> <span data-field="invoiceNo"></span></td>
+</tr>
+<tr>
+    <td colspan="4"><b>Date:</b> <span data-field="date"></span></td>
+</tr>
+<tr>
+    <td colspan="4"><b>Vehicle No.:</b> <span data-field="vehicleNo"></span></td>
+</tr>
+<tr>
+    <td colspan="4"><b>Container No.:</b> <span data-field="containerNo"></span></td>
+</tr>
+
+<tr>
+    <td colspan="5"><b>Party GSTIN:</b> <span data-field="partyGstin"></span></td>
+    <td colspan="5"><b>GR/LR/RR No.:</b> <span data-field="grNo"></span></td>
+</tr>
+
+<tr>
+    <td colspan="5" style="padding:0;">
+        <div class="state-split">
+            <div><b>State:</b> <span data-field="state"></span></div>
+            <div><b>State Code:</b> <span data-field="stateCode"></span></div>
+        </div>
+    </td>
+    <td colspan="5" rowspan="2"><b>Transport Name:</b> <span data-field="transportName"></span></td>
+</tr>
+
+<tr>
+    <td colspan="5"><b>E-way Bill No.:</b> <span data-field="ewayBillNo"></span></td>
+</tr>
+
+<tr>
+    <td colspan="10"><b>Ship To:</b> <span data-field="shipTo"></span></td>
+</tr>
+
+<tr class="center bold items-header">
+    <th rowspan="2">S.No.</th>
+    <th rowspan="2" colspan="4">Description</th>
+    <th rowspan="2">HSN<br>CODE</th>
+    <th rowspan="2">Quantity<br><span class="unit-line">Sq. ft / Kg. / Ton</span></th>
+    <th rowspan="2">Rate per<br><span class="unit-line">Sq. ft / Kg. / Ton</span></th>
+    <th colspan="2">Amount</th>
+</tr>
+<tr class="center bold items-header">
+    <th class="right">Rs</th>
+    <th class="right">P</th>
+</tr>
+
+<tbody id="items-body"></tbody>
+
+<tr class="summary">
+    <td colspan="7" rowspan="4" style="vertical-align:middle;">
+        <b>Our Bank Details:</b><br>
+        <b>Bank Name:</b> Punjab National Bank, Sukher Branch, Udaipur<br>
+        <b>A/C No.:</b> 8795002100003638 &nbsp;&nbsp;&nbsp;
+        <b>IFSC:</b> PUNB0879500
+    </td>
+    <td><b>Total:</b></td>
+    <td class="amount-col" data-field="subtotalRs"></td>
+    <td class="amount-col" data-field="subtotalP"></td>
+</tr>
+<tr class="summary" data-tax-row="cgst">
+    <td><b>CGST @ <span data-field="cgstRate">—</span> %</b></td>
+    <td class="amount-col" data-field="cgstRs"></td>
+    <td class="amount-col" data-field="cgstP"></td>
+</tr>
+<tr class="summary" data-tax-row="sgst">
+    <td><b>SGST @ <span data-field="sgstRate">—</span> %</b></td>
+    <td class="amount-col" data-field="sgstRs"></td>
+    <td class="amount-col" data-field="sgstP"></td>
+</tr>
+<tr class="summary" data-tax-row="igst">
+    <td><b>IGST @ <span data-field="igstRate">—</span> %</b></td>
+    <td class="amount-col" data-field="igstRs"></td>
+    <td class="amount-col" data-field="igstP"></td>
+</tr>
+<tr class="summary">
+    <td colspan="7" rowspan="2" class="amount-words-cell">
+        <b>Invoice Amount in Words:</b> <span data-field="amountWords"></span>
+    </td>
+    <td><b>Other Charge:</b></td>
+    <td class="amount-col" data-field="otherChargeRs"></td>
+    <td class="amount-col" data-field="otherChargeP"></td>
+</tr>
+<tr class="summary">
+    <td><b>Total Amount:</b></td>
+    <td class="amount-col" data-field="grandTotalRs"></td>
+    <td class="amount-col" data-field="grandTotalP"></td>
+</tr>
+
+<tr>
+    <td colspan="7" class="signature-block">
+        <div class="signature-block-inner">
+            <div class="notes">
+                <b>This is to certify that we have valid registration under the GST Act and the above information is true and correct.</b>
+                <ol style="margin:6px 0 0 18px; padding:0;">
+                    <li>Subject to Udaipur Jurisdiction.</li>
+                    <li>Goods once sold will not be taken back in any condition.</li>
+                    <li>We will not be responsible for any breakage, loss, or damage during transit.</li>
+                    <li>Payment on delivery; otherwise interest @ 24% p.a. will be charged.</li>
+                    <li>E.&amp;O.E.</li>
+                </ol>
+            </div>
+            <div class="customer-signature-space"></div>
+            <div class="notes-footer">Customer's Signature</div>
+        </div>
+    </td>
+    <td colspan="3" class="signature-block">
+        <div class="signature-for">For ARIHANT MARBLE &amp; GRANITE</div>
+        <div class="signature-label signature-label-right">Authorised Signatory</div>
+    </td>
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>
