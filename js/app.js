@@ -50,15 +50,21 @@ function createItemCard() {
         <input type="text" class="item-hsn">
       </div>
       <div class="field">
+        <label>Unit <span class="optional">(e.g. kg, box, etc.)</span></label>
+        <input type="text" class="item-unit">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
         <label>Quantity</label>
         <input type="number" class="item-qty" min="0" step="0.01" value="1" inputmode="decimal" required>
       </div>
-    </div>
-    <div class="field item-rate-row">
       <div class="field">
-        <label>Rate (₹ per unit)</label>
+        <label>Rate (₹) per <span class="item-unit-preview">unit</span></label>
         <input type="number" class="item-rate" min="0" step="0.01" value="0" inputmode="decimal" required>
       </div>
+    </div>
+    <div class="field item-rate-row">
       <button type="button" class="btn btn-link remove-item-btn" aria-label="Remove item">Remove</button>
     </div>
   `;
@@ -75,6 +81,13 @@ function createItemCard() {
 
   card.querySelectorAll(".item-qty, .item-rate").forEach((input) => {
     input.addEventListener("input", () => updateItemAmount(card));
+  });
+
+  const unitInput = card.querySelector(".item-unit");
+  const unitPreview = card.querySelector(".item-unit-preview");
+  unitInput.addEventListener("input", () => {
+    const unit = unitInput.value.trim();
+    unitPreview.textContent = unit || "unit";
   });
 
   itemsContainer.appendChild(card);
@@ -98,6 +111,7 @@ function collectItems() {
   return [...itemsContainer.querySelectorAll(".item-card")].map((card) => ({
     description: card.querySelector(".item-description").value.trim(),
     hsn: card.querySelector(".item-hsn").value.trim(),
+    unit: card.querySelector(".item-unit").value.trim(),
     qty: Number(card.querySelector(".item-qty").value) || 0,
     rate: Number(card.querySelector(".item-rate").value) || 0,
   }));
@@ -117,6 +131,7 @@ function collectFormData() {
     vehicleNo: form.vehicleNo.value.trim(),
     containerNo: form.containerNo.value.trim(),
     grNo: form.grNo.value.trim(),
+    sealNo: form.sealNo.value.trim(),
     ewayBillNo: form.ewayBillNo.value.trim(),
     transportName: form.transportName.value.trim(),
     taxType,

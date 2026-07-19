@@ -327,8 +327,13 @@ textarea {
 .item-rate-row {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
+}
+
+.item-unit-preview {
+  font-weight: 600;
+  color: var(--accent);
 }
 
 .item-rate-row .field {

@@ -49,6 +49,18 @@ function calculateTotals(items, data) {
   return { subtotal, cgst, sgst, igst, otherCharge, grandTotal };
 }
 
+function formatQtyDisplay(qty, unit) {
+  const n = formatAmount(qty);
+  const u = (unit || "").trim();
+  return u ? `${n} ${u}` : n;
+}
+
+function formatRateDisplay(rate, unit) {
+  const n = formatAmount(rate);
+  const u = (unit || "").trim();
+  return u ? `Rs. ${n} per ${u}` : n;
+}
+
 function createItemRow(doc, item, index, itemCount) {
   const amount = item.qty * item.rate;
   const { rs, p } = splitRsPaise(amount);
@@ -58,8 +70,8 @@ function createItemRow(doc, item, index, itemCount) {
     <td class="center">${index + 1}</td>
     <td colspan="4">${escapeHtml(item.description)}</td>
     <td class="center">${escapeHtml(item.hsn || "")}</td>
-    <td class="right">${formatAmount(item.qty)}</td>
-    <td class="right">${formatAmount(item.rate)}</td>
+    <td class="right">${escapeHtml(formatQtyDisplay(item.qty, item.unit))}</td>
+    <td class="right">${escapeHtml(formatRateDisplay(item.rate, item.unit))}</td>
     <td class="amount-col">${rs}</td>
     <td class="amount-col">${p}</td>
   `;
@@ -79,7 +91,7 @@ function populateInvoice(doc, data) {
 
   const textFields = [
     "partyName", "invoiceNo", "date", "vehicleNo", "containerNo",
-    "partyGstin", "grNo", "state", "stateCode", "transportName",
+    "partyGstin", "grNo", "sealNo", "state", "stateCode", "transportName",
     "ewayBillNo", "shipTo",
   ];
   textFields.forEach((field) => setText(doc, field, data[field] || ""));
