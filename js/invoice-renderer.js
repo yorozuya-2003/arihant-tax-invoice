@@ -134,6 +134,10 @@ function populateInvoice(doc, data) {
   if (logo && !logo.src.startsWith("http")) {
     logo.src = new URL("assets/terapanth.jpg", base).href;
   }
+  const signature = doc.querySelector(".signature-img");
+  if (signature && !signature.src.startsWith("http")) {
+    signature.src = new URL("assets/signature.png", base).href;
+  }
 
   doc.title = buildInvoiceFilename(data);
 }

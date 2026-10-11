@@ -189,7 +189,23 @@ td, th {
     font-style: italic;
 }
 
-.signature-label-right { right: 10px; }
+.signature-label-center {
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.signature-block-company { height: 145px; }
+
+.signature-img {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 36px;
+    max-height: 82px;
+    max-width: 90%;
+    object-fit: contain;
+}
 
 .tax-inactive { color: #888; }
 
@@ -375,9 +391,10 @@ td, th {
             <div class="notes-footer">Customer's Signature</div>
         </div>
     </td>
-    <td colspan="3" class="signature-block">
+    <td colspan="3" class="signature-block signature-block-company">
         <div class="signature-for">For ARIHANT MARBLE &amp; GRANITE</div>
-        <div class="signature-label signature-label-right">Authorised Signatory</div>
+        <img src="assets/signature.png" alt="" class="signature-img">
+        <div class="signature-label signature-label-center">Authorised Signatory</div>
     </td>
 </tr>
 
